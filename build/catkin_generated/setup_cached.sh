@@ -7,7 +7,6 @@
 # new environment variables
 
 # modified environment variables
-export CMAKE_PREFIX_PATH="/home/zoe/doc/lio/devel:$CMAKE_PREFIX_PATH"
+export LD_LIBRARY_PATH='/opt/ros/noetic/lib'
+export PKG_CONFIG_PATH='/opt/ros/noetic/lib/pkgconfig'
 export PWD='/home/zoe/doc/lio/build'
-export ROSLISP_PACKAGE_DIRECTORIES='/home/zoe/doc/lio/devel/share/common-lisp'
-export ROS_PACKAGE_PATH="/home/zoe/doc/lio/src:$ROS_PACKAGE_PATH"
