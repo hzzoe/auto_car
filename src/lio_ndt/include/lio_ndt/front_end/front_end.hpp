@@ -9,8 +9,8 @@
 #include <pcl/registration/icp.h> // icp头文件
 #include <lio_ndt/sensor_data/cloud_data.hpp>
 
-#include "lio_ndt/method/optimized_ICP_GN.h"
-#include "lio_ndt/method/common.h"
+// #include "lio_ndt/method/optimized_ICP_GN.h"
+// #include "lio_ndt/method/common.h"
 
 namespace lio_ndt
 {

@@ -6,15 +6,14 @@
 
 namespace lio_ndt
 {
-    FrontEnd::FrontEnd():
-                         local_map_ptr_(new CloudData::CLOUD()),
+    FrontEnd::FrontEnd():local_map_ptr_(new CloudData::CLOUD()),
                          global_map_ptr_(new CloudData::CLOUD()),
                          result_cloud_ptr_(new CloudData::CLOUD())
         {
-            ndt.setTransformationEpsilon(0.5);  // 变换矩阵的最小变化量阈值
+            ndt.setTransformationEpsilon(0.5);   // 变换矩阵的最小变化量阈值
             ndt.setStepSize(0.1);                // 步长
             ndt.setResolution(1.0);              // 搜索半径 分辨率
-            ndt.setMaximumIterations(2);        // 最大迭代次数
+            ndt.setMaximumIterations(2);         // 最大迭代次数
             cloud_filter_.setLeafSize(1.5f,1.5f,1.5f);
             local_map_filter_.setLeafSize(1.0f,1.0f,1.0f);
             display_filter_.setLeafSize(1.0f,1.0f,1.0f); 
@@ -47,13 +46,12 @@ namespace lio_ndt
             return current_frame_.pose;
         }
         // 不是第一帧，就正常匹配
-        //icp_opti.Match(filtered_cloud_ptr,predict_pose,result_cloud_ptr_,current_frame_.pose);
         
         Eigen::AngleAxisf init_rotation(0.69, Eigen::Vector3f::UnitZ());
         Eigen::Translation3f init_translasition(1.0, 0, 0);
         Eigen::Matrix4f init_guss = (init_translasition * init_rotation).matrix();
         
-        ndt.align(*target_cloud, init_guss);
+        ndt.align(*result_cloud_ptr_, init_guss);
         pcl::transformPointCloud(*filtered_cloud_ptr, *result_cloud_ptr_, init_guss);
         std::cout<<"fitness score:"<<ndt.getFitnessScore()<<std::endl;
         
@@ -115,14 +113,16 @@ namespace lio_ndt
         // 更新匹配的目标点云
         if (local_map_frames_.size() < 10) // 如果局部地图数量少于10个，直接设置为目标点云
         {
-            icp_opti.SetTargetCloud(local_map_ptr_);
+            ndt.setInputTarget(local_map_ptr_);
+            //ndt.SetTargetCloud(local_map_ptr_);
         }
         else // 否则，先对局部地图进行下采样，再加进去
         {
             CloudData::CLOUD_PTR filtered_local_map_ptr(new CloudData::CLOUD());
             local_map_filter_.setInputCloud(local_map_ptr_);
             local_map_filter_.filter(*filtered_local_map_ptr);
-            icp_opti.SetTargetCloud(filtered_local_map_ptr);
+            ndt.setInputTarget(filtered_local_map_ptr);
+            //icp_opti.SetTargetCloud(filtered_local_map_ptr);
         }
         
         // 更新全局地图
